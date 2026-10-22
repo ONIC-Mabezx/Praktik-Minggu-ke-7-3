@@ -67,12 +67,18 @@ REST API ini menggunakan model dan field produk SabuMarket: `name`, `category`,
 | --- | --- | --- | --- |
 | GET | `/api/products` | Publik | Daftar produk aktif, paginasi 15 produk |
 | GET | `/api/products/{id}` | Publik | Detail produk aktif |
-| POST | `/api/products` | Login | Membuat produk |
-| PUT/PATCH | `/api/products/{id}` | Login | Memperbarui produk |
-| DELETE | `/api/products/{id}` | Login | Menghapus produk |
+| POST | `/api/login` | Publik | Login dengan email dan password, menghasilkan Bearer token |
+| GET | `/api/user` | Bearer token | Informasi pengguna yang sedang login |
+| POST | `/api/logout` | Bearer token | Mencabut token yang sedang digunakan |
+| POST | `/api/products` | Bearer token | Membuat produk |
+| PUT/PATCH | `/api/products/{id}` | Bearer token | Memperbarui produk |
+| DELETE | `/api/products/{id}` | Bearer token | Menghapus produk |
 
-Endpoint tulis memakai sesi login website (termasuk token CSRF untuk permintaan
-browser). Permintaan API sebaiknya menyertakan header `Accept: application/json`.
+Endpoint autentikasi dan produk menggunakan Laravel Sanctum. Login menerima
+`email` dan `password`; gunakan nilai `access_token` dari respons sebagai header
+`Authorization: Bearer <access_token>` untuk mengakses `/api/user`, `/api/logout`,
+dan endpoint tulis produk. Logout mencabut token yang sedang digunakan.
+Permintaan API sebaiknya menyertakan header `Accept: application/json`.
 Pembuatan produk memerlukan `name` dan `price`; `stock` default ke `0`, sedangkan
 `is_active` default ke `true`. Upload `image` menerima JPG, JPEG, PNG, atau WEBP
 dengan ukuran maksimum 2 MB.
